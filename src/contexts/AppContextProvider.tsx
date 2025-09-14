@@ -1,4 +1,4 @@
-import {  useReducer, type ReactNode } from "react";
+import { useReducer, type ReactNode } from "react";
 import type { AppAction, AppState } from "../@types/AppState";
 import { AppContext } from "./AppContext";
 
@@ -32,6 +32,21 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
           [action.payload.name]: action.payload.value,
         },
       };
+    case "UPDATE_LEAD_SUCCESS":
+      return {
+        ...state,
+        leads: state.leads.map((lead) =>
+          lead.id === action.payload.id ? action.payload : lead
+        ),
+        selectedLeadId: null,
+      };
+    case "CONVERT_TO_OPPORTUNITY":
+      return {
+        ...state,
+        leads: state.leads.filter((lead) => lead.id !== action.payload.leadId),
+        opportunities: [...state.opportunities, action.payload.opportunity],
+        selectedLeadId: null,
+      };
     default:
       return state;
   }
@@ -45,5 +60,3 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     </AppContext.Provider>
   );
 };
-
-

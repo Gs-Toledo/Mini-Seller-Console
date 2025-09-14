@@ -14,8 +14,13 @@ export interface AppState {
 }
 
 export type AppAction =
-  | { type: 'FETCH_START' }
-  | { type: 'FETCH_SUCCESS'; payload: Lead[] }
-  | { type: 'FETCH_ERROR'; payload: string }
-  | { type: 'SELECT_LEAD'; payload: number | null }
-  | { type: 'UPDATE_FILTERS'; payload: { name: string; value: string } };
+  | { type: "FETCH_START" }
+  | { type: "FETCH_SUCCESS"; payload: Lead[] }
+  | { type: "FETCH_ERROR"; payload: string }
+  | { type: "SELECT_LEAD"; payload: number | null }
+  | { type: "UPDATE_FILTERS"; payload: { name: string; value: string } }
+  | { type: "UPDATE_LEAD_SUCCESS"; payload: Lead }
+  | {
+      type: "CONVERT_TO_OPPORTUNITY";
+      payload: { leadId: number; opportunity: Opportunity };
+    };

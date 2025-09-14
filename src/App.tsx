@@ -3,10 +3,15 @@ import { LeadsTable } from "./components/leads/LeadsTable";
 import { fetchLeads } from "./api/leadsApi";
 import { Spinner } from "./components/commom/Spinner";
 import { useAppContext } from "./hooks/UseAppContext";
+import type { Lead } from "./@types/Lead";
+import type { Opportunity } from "./@types/Opportunity";
+import { OpportunitiesTable } from "./components/opportunities/OpportunitiesTable";
+import { LeadDetailPanel } from "./components/leads/LeadDetailPanel";
 
 function App() {
   const { state, dispatch } = useAppContext();
-  const { leads, isLoading, error, filters, selectedLeadId } = state;
+  const { leads, opportunities, isLoading, error, filters, selectedLeadId } =
+    state;
 
   useEffect(() => {
     const loadLeads = async () => {
@@ -47,6 +52,27 @@ function App() {
     const newSelectedId = selectedLeadId === id ? null : id;
     dispatch({ type: "SELECT_LEAD", payload: newSelectedId });
   };
+
+  const handleClosePanel = () => {
+    dispatch({ type: "SELECT_LEAD", payload: null });
+  };
+
+  const handleConvertLead = (leadToConvert: Lead) => {
+    const newOpportunity: Opportunity = {
+      id: `opp_${new Date().getTime()}`,
+      name: `${leadToConvert.company} - Opportunity`,
+      accountName: leadToConvert.company,
+      stage: "Discovery",
+    };
+    dispatch({
+      type: "CONVERT_TO_OPPORTUNITY",
+      payload: { leadId: leadToConvert.id, opportunity: newOpportunity },
+    });
+  };
+
+  const selectedLead = useMemo(() => {
+    return leads.find((lead) => lead.id === selectedLeadId);
+  }, [leads, selectedLeadId]);
 
   const renderContent = () => {
     if (isLoading) return <Spinner />;
@@ -90,7 +116,16 @@ function App() {
 
         <div className="mt-4">{renderContent()}</div>
 
-        {/* TODO: Render LeadDetailPanel if a lead is selected */}
+        <OpportunitiesTable opportunities={opportunities} />
+
+        {selectedLead && (
+          <LeadDetailPanel
+            lead={selectedLead}
+            isOpen={!!selectedLeadId}
+            onClose={handleClosePanel}
+            onConvert={handleConvertLead}
+          />
+        )}
       </main>
     </div>
   );
