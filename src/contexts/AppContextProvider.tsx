@@ -17,15 +17,28 @@ const initialState: AppState = {
 };
 
 const getInitialState = (): AppState => {
+  const finalState = { ...initialState };
   try {
     const persistedFilters = localStorage.getItem("seller-console-filters");
     if (persistedFilters) {
-      return { ...initialState, filters: JSON.parse(persistedFilters) };
+      finalState.filters = JSON.parse(persistedFilters);
+    }
+
+    const persistedPagination = localStorage.getItem(
+      "seller-console-pagination"
+    );
+    if (persistedPagination) {
+      finalState.pagination = {
+        ...initialState.pagination,
+        ...JSON.parse(persistedPagination),
+      };
     }
   } catch (error) {
-    console.error("Failed to parse filters from localStorage", error);
+    console.error("Failed to parse state from localStorage", error);
+    localStorage.removeItem("seller-console-filters");
+    localStorage.removeItem("seller-console-pagination");
   }
-  return initialState;
+  return finalState;
 };
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -41,6 +54,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case "UPDATE_FILTERS":
       return {
         ...state,
+        pagination: { ...state.pagination, currentPage: 1 },
         filters: {
           ...state.filters,
           [action.payload.name]: action.payload.value,
@@ -96,6 +110,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       console.error("Failed to save filters to localStorage", error);
     }
   }, [state.filters]);
+
+  useEffect(() => {
+    try {
+      const paginationToSave = { itemsPerPage: state.pagination.itemsPerPage };
+      localStorage.setItem(
+        "seller-console-pagination",
+        JSON.stringify(paginationToSave)
+      );
+    } catch (error) {
+      console.error("Failed to save pagination to localStorage", error);
+    }
+  }, [state.pagination.itemsPerPage]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
