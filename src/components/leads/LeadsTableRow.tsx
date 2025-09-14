@@ -1,5 +1,10 @@
 import type { Lead } from "../../@types/Lead";
 
+interface LeadsTableRowProps {
+  lead: Lead;
+  onSelectLead: (id: number) => void;
+}
+
 const statusColors = {
   New: "bg-blue-500",
   Contacted: "bg-yellow-500",
@@ -7,11 +12,14 @@ const statusColors = {
   Disqualified: "bg-red-500",
 };
 
-export const LeadsTableRow = ({ lead }: {lead: Lead}) => {
+export const LeadsTableRow = ({ lead, onSelectLead }: LeadsTableRowProps) => {
   const statusColor = statusColors[lead.status] || "bg-gray-500";
 
   return (
-    <tr className="bg-gray-800 border-b border-gray-700 hover:bg-gray-600 cursor-pointer transition-colors duration-150">
+    <tr
+      className="bg-gray-800 border-b border-gray-700 hover:bg-gray-600 cursor-pointer transition-colors duration-150"
+      onClick={() => onSelectLead(lead.id)}
+    >
       <th
         scope="row"
         className="px-6 py-4 font-medium text-white whitespace-nowrap"
