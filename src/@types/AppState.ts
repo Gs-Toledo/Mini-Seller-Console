@@ -14,7 +14,8 @@ export interface AppState {
     status: "all" | LeadStatus; // 'all' or leadStatus
   };
   sortConfig: SortConfig;
-  pagination: PaginationConfig;
+  leadsPagination: PaginationConfig;
+  opportunitiesPagination: PaginationConfig;
 }
 
 export type AppAction =
@@ -33,4 +34,9 @@ export type AppAction =
       payload: { leadId: number; opportunity: Opportunity };
     }
   | { type: "SET_SORT_CONFIG"; payload: SortConfig }
-  | { type: "SET_PAGINATION"; payload: Partial<PaginationConfig> };
+  | { type: "SET_LEADS_PAGINATION"; payload: Partial<PaginationConfig> }
+  | { type: "REMOVE_OPPORTUNITY"; payload: string }
+  | {
+      type: "SET_OPPORTUNITIES_PAGINATION";
+      payload: Partial<PaginationConfig>;
+    };

@@ -2,10 +2,12 @@ import type { Opportunity } from "../../@types/Opportunity";
 
 interface OpportunitiesTableProps {
   opportunities: Opportunity[];
+  onRemove: (id: string) => void;
 }
 
 export const OpportunitiesTable = ({
   opportunities,
+  onRemove,
 }: OpportunitiesTableProps) => {
   if (opportunities.length === 0) {
     return null;
@@ -27,6 +29,7 @@ export const OpportunitiesTable = ({
               <th scope="col" className="px-6 py-3">
                 Stage
               </th>
+              <th scope="col" className="px-6 py-3 text-right"></th>
             </tr>
           </thead>
           <tbody>
@@ -35,6 +38,14 @@ export const OpportunitiesTable = ({
                 <td className="px-6 py-4 font-medium text-white">{opp.name}</td>
                 <td className="px-6 py-4">{opp.accountName}</td>
                 <td className="px-6 py-4">{opp.stage}</td>
+                <td className="px-6 py-4 text-right">
+                  <button
+                    onClick={() => onRemove(opp.id)}
+                    className="font-medium text-red-500 hover:text-red-400"
+                  >
+                    Remove
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

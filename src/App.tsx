@@ -1,33 +1,27 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
-import { LeadsTable } from "./components/leads/LeadsTable";
 import { fetchLeads } from "./api/leadsApi";
 import { Spinner } from "./components/commom/Spinner";
-import { useAppContext } from "./hooks/UseAppContext";
 import type { Lead } from "./@types/Lead";
 import type { Opportunity } from "./@types/Opportunity";
-import { OpportunitiesTable } from "./components/opportunities/OpportunitiesTable";
 import { LeadDetailPanel } from "./components/leads/LeadDetailPanel";
 import { Tab, Tabs } from "./components/commom/Tabs";
-import { PaginationControls } from "./components/commom/PaginationControls";
+import { useAppContext } from "./hooks/useAppContext";
+import { useProcessedData } from "./hooks/useProcessedData";
+import { LeadsView } from "./components/views/LeadsView";
+import { OpportunitiesView } from "./components/views/OpportunitiesView";
 
 function App() {
   const { state, dispatch } = useAppContext();
-  const {
-    leads,
-    opportunities,
-    isLoading,
-    error,
-    filters,
-    selectedLeadId,
-    sortConfig,
-    pagination,
-  } = state;
+  const { isLoading, error, selectedLeadId } = state;
 
   const [activeTab, setActiveTab] = useState<"leads" | "opportunities">(
     "leads"
   );
 
   const [isPanelMounted, setIsPanelMounted] = useState(false);
+
+  const { processedLeads, paginatedLeads, paginatedOpportunities } =
+    useProcessedData(state);
 
   useEffect(() => {
     const loadLeads = async () => {
@@ -43,40 +37,11 @@ function App() {
     loadLeads();
   }, [dispatch]);
 
-  const processedLeads = useMemo(() => {
-    const filtered = leads
-      .filter(
-        (lead) =>
-          lead.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-          lead.company.toLowerCase().includes(filters.searchQuery.toLowerCase())
-      )
-      .filter((lead) =>
-        filters.status === "all" ? true : lead.status === filters.status
-      );
-
-    const sorted = [...filtered].sort((a, b) => {
-      if (a[sortConfig.key] < b[sortConfig.key]) {
-        return sortConfig.direction === "asc" ? -1 : 1;
-      }
-      if (a[sortConfig.key] > b[sortConfig.key]) {
-        return sortConfig.direction === "asc" ? 1 : -1;
-      }
-      return 0;
-    });
-
-    return sorted;
-  }, [leads, filters, sortConfig]);
-
-  const paginatedLeads = useMemo(() => {
-    const { currentPage, itemsPerPage } = pagination;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return processedLeads.slice(startIndex, endIndex);
-  }, [processedLeads, pagination]);
-
   const handleSort = (key: keyof Lead) => {
     const direction =
-      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+      state.sortConfig.key === key && state.sortConfig.direction === "asc"
+        ? "desc"
+        : "asc";
     dispatch({ type: "SET_SORT_CONFIG", payload: { key, direction } });
   };
 
@@ -107,6 +72,12 @@ function App() {
     dispatch({ type: "SELECT_LEAD", payload: null });
   };
 
+  const handleRemoveOpportunity = (id: string) => {
+    if (window.confirm("Do you really want to remove this Opportunity?")) {
+      dispatch({ type: "REMOVE_OPPORTUNITY", payload: id });
+    }
+  };
+
   const handleConvertLead = (leadToConvert: Lead) => {
     const newOpportunity: Opportunity = {
       id: `opp_${new Date().getTime()}`,
@@ -121,8 +92,8 @@ function App() {
   };
 
   const selectedLead = useMemo(() => {
-    return leads.find((lead) => lead.id === selectedLeadId);
-  }, [leads, selectedLeadId]);
+    return state.leads.find((lead) => lead.id === selectedLeadId);
+  }, [state.leads, selectedLeadId]);
 
   const renderContent = () => {
     if (isLoading) return <Spinner />;
@@ -131,34 +102,26 @@ function App() {
     return (
       <>
         {activeTab === "leads" && (
-          <>
-            <LeadsTable
-              leads={paginatedLeads}
-              onSelectLead={handleSelectLead}
-              onSort={handleSort}
-              sortConfig={sortConfig}
-            />
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              itemsPerPage={pagination.itemsPerPage}
-              totalItems={processedLeads.length}
-              onPageChange={(page) =>
-                dispatch({
-                  type: "SET_PAGINATION",
-                  payload: { currentPage: page },
-                })
-              }
-              onItemsPerPageChange={(size) =>
-                dispatch({
-                  type: "SET_PAGINATION",
-                  payload: { itemsPerPage: size, currentPage: 1 },
-                })
-              }
-            />
-          </>
+          <LeadsView
+            processedLeads={processedLeads}
+            paginatedLeads={paginatedLeads}
+            sortConfig={state.sortConfig}
+            leadsPagination={state.leadsPagination}
+            filters={state.filters}
+            onSort={handleSort}
+            onSelectLead={handleSelectLead}
+            onFilterChange={handleFilterChange}
+            dispatch={dispatch}
+          />
         )}
         {activeTab === "opportunities" && (
-          <OpportunitiesTable opportunities={opportunities} />
+          <OpportunitiesView
+            paginatedOpportunities={paginatedOpportunities}
+            totalOpportunities={state.opportunities.length}
+            opportunitiesPagination={state.opportunitiesPagination}
+            onRemove={handleRemoveOpportunity}
+            dispatch={dispatch}
+          />
         )}
       </>
     );
@@ -171,7 +134,7 @@ function App() {
           <strong>Error:</strong> {error}
         </div>
       )}
-      <main className="max-w-4xl mx-auto p-4 sm:p-6">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6">
         <header className="mb-6">
           <h1 className="text-3xl font-bold">Mini Seller Console</h1>
         </header>
@@ -181,40 +144,15 @@ function App() {
             isActive={activeTab === "leads"}
             onClick={() => setActiveTab("leads")}
           >
-            Leads ({leads.length})
+            Leads ({state.leads.length})
           </Tab>
           <Tab
             isActive={activeTab === "opportunities"}
             onClick={() => setActiveTab("opportunities")}
           >
-            Opportunities ({opportunities.length})
+            Opportunities ({state.opportunities.length})
           </Tab>
         </Tabs>
-
-        {activeTab === "leads" && (
-          <div className="flex flex-col sm:flex-row gap-4 mb-4">
-            <input
-              type="text"
-              name="searchQuery"
-              placeholder="Search for name of company..."
-              value={filters.searchQuery}
-              onChange={handleFilterChange}
-              className="flex-grow bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <select
-              name="status"
-              value={filters.status}
-              onChange={handleFilterChange}
-              className="bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="New">New</option>
-              <option value="Contacted">Contacted</option>
-              <option value="Qualified">Qualified</option>
-              <option value="Disqualified">Disqualified</option>
-            </select>
-          </div>
-        )}
 
         <div className="mt-4">{renderContent()}</div>
 

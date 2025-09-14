@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Lead } from "../../@types/Lead";
-import { useAppContext } from "../../hooks/UseAppContext";
+import { useAppContext } from "../../hooks/useAppContext";
 import { isValidEmail } from "../../utils/validator";
 import { updateLead } from "../../api/leadsApi";
 
