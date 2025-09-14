@@ -9,7 +9,6 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Função para carregar os dados ao montar o componente
     const loadLeads = async () => {
       try {
         setIsLoading(true);
@@ -31,7 +30,7 @@ function App() {
       return <Spinner />;
     }
     if (error) {
-      return <p className="text-center text-red-400 p-4">Erro: {error}</p>;
+      return <p className="text-center text-red-400 p-4">Error: {error}</p>;
     }
     return <LeadsTable leads={leads} />;
   };
@@ -43,7 +42,7 @@ function App() {
           <h1 className="text-3xl font-bold text-gray-100">
             Mini Seller Console
           </h1>
-          <p className="text-gray-400">Triage de Leads e Oportunidades</p>
+          <p className="text-gray-400">Triage Leads and Opportunities</p>
         </header>
 
         {/* TODO: ADD filters and Search */}

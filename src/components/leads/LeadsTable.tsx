@@ -3,7 +3,7 @@ import { LeadsTableRow } from "./LeadsTableRow";
 
 export const LeadsTable = ({ leads }: {leads: Lead[]}) => {
   if (leads.length === 0) {
-    return <p className="text-center text-gray-400 p-4">Nenhum lead encontrado.</p>;
+    return <p className="text-center text-gray-400 p-4">No Leads Found.</p>;
   }
 
   return (
