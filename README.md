@@ -22,7 +22,6 @@ This project implements a full range of modern front-end features, demonstrating
 - **Detailed View Panel**:
   - Click on a lead to open a sleek slide-over panel with detailed information.
   - Inline editing for a lead's email and status with format validation.
-  - Smooth entry/exit animations.
 
 #### Advanced Features & Best Practices
 
