@@ -14,9 +14,17 @@ function App() {
   const { state, dispatch } = useAppContext();
   const { isLoading, error, selectedLeadId } = state;
 
-  const [activeTab, setActiveTab] = useState<"leads" | "opportunities">(
-    "leads"
-  );
+  const [activeTab, setActiveTab] = useState<"leads" | "opportunities">(() => {
+    const savedTab = localStorage.getItem("seller-console-active-tab");
+    if (savedTab === "leads" || savedTab === "opportunities") {
+      return savedTab;
+    }
+    return "leads";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("seller-console-active-tab", activeTab);
+  }, [activeTab]);
 
   const [isPanelMounted, setIsPanelMounted] = useState(false);
 
