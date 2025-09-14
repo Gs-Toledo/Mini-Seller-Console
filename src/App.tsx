@@ -83,12 +83,14 @@ function App() {
 
   return (
     <div className="bg-gray-900 min-h-screen text-white font-sans">
+      {error && (
+        <div className="bg-red-500 text-white text-center p-2">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
       <main className="max-w-4xl mx-auto p-4 sm:p-6">
         <header className="mb-6">
           <h1 className="text-3xl font-bold">Mini Seller Console</h1>
-          <p className="text-gray-400">
-            Selected Lead ID: {selectedLeadId || "None"}
-          </p>
         </header>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
@@ -110,7 +112,7 @@ function App() {
             <option value="New">New</option>
             <option value="Contacted">Contacted</option>
             <option value="Qualified">Qualified</option>
-            <option value="Unqualified">Unqualified</option>
+            <option value="Disqualified">Disqualified</option>
           </select>
         </div>
 

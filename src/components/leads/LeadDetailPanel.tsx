@@ -40,15 +40,28 @@ export const LeadDetailPanel = ({
 
   const handleSave = async () => {
     if (!isValidEmail(formData.email)) {
-      setError("Formato de e-mail inválido.");
+      setError("Invalid Email Format.");
       return;
     }
+
+    const originalLead = { ...lead };
+    const optimisticLead: Lead = { ...lead, ...formData };
+
+    dispatch({ type: "UPDATE_LEAD_SUCCESS", payload: optimisticLead });
+
     setError(null);
     setIsSaving(true);
+
     try {
-      const updatedLead = await updateLead(lead.id, formData);
-      dispatch({ type: "UPDATE_LEAD_SUCCESS", payload: updatedLead });
+      await updateLead(lead.id, formData);
+      setTimeout(() => {
+        onClose();
+      }, 500);
     } catch (err) {
+      dispatch({
+        type: "UPDATE_LEAD_FAILURE",
+        payload: { originalLead: originalLead, error: (err as Error).message },
+      });
       setError((err as Error).message);
     } finally {
       setIsSaving(false);
@@ -65,7 +78,7 @@ export const LeadDetailPanel = ({
       />
 
       {/* Panel */}
-      {/* TODO: Fix panel animation */}
+      {/* FIXME: Fix panel animation */}
       <div
         className={`fixed top-0 right-0 h-full w-full max-w-md bg-gray-800 shadow-xl z-50 p-6 flex flex-col 
                     transform transition-transform duration-300 ease-in-out
@@ -112,7 +125,7 @@ export const LeadDetailPanel = ({
             </div>
 
             <p>
-              <strong className="text-gray-400">Empresa:</strong> {lead.company}
+              <strong className="text-gray-400">Company:</strong> {lead.company}
             </p>
             <p>
               <strong className="text-gray-400">Source:</strong> {lead.source}

@@ -1,4 +1,4 @@
-import { useReducer, type ReactNode } from "react";
+import { useEffect, useReducer, type ReactNode } from "react";
 import type { AppAction, AppState } from "../@types/AppState";
 import { AppContext } from "./AppContext";
 
@@ -12,6 +12,18 @@ const initialState: AppState = {
     searchQuery: "",
     status: "all",
   },
+};
+
+const getInitialState = (): AppState => {
+  try {
+    const persistedFilters = localStorage.getItem("seller-console-filters");
+    if (persistedFilters) {
+      return { ...initialState, filters: JSON.parse(persistedFilters) };
+    }
+  } catch (error) {
+    console.error("Failed to parse filters from localStorage", error);
+  }
+  return initialState;
 };
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -40,6 +52,16 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         ),
         selectedLeadId: null,
       };
+    case "UPDATE_LEAD_FAILURE":
+      return {
+        ...state,
+        error: action.payload.error,
+        leads: state.leads.map((lead) =>
+          lead.id === action.payload.originalLead.id
+            ? action.payload.originalLead
+            : lead
+        ),
+      };
     case "CONVERT_TO_OPPORTUNITY":
       return {
         ...state,
@@ -53,7 +75,19 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 };
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+  const [state, dispatch] = useReducer(appReducer, getInitialState());
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "seller-console-filters",
+        JSON.stringify(state.filters)
+      );
+    } catch (error) {
+      console.error("Failed to save filters to localStorage", error);
+    }
+  }, [state.filters]);
+
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}

@@ -21,6 +21,10 @@ export type AppAction =
   | { type: "UPDATE_FILTERS"; payload: { name: string; value: string } }
   | { type: "UPDATE_LEAD_SUCCESS"; payload: Lead }
   | {
+      type: "UPDATE_LEAD_FAILURE";
+      payload: { originalLead: Lead; error: string };
+    }
+  | {
       type: "CONVERT_TO_OPPORTUNITY";
       payload: { leadId: number; opportunity: Opportunity };
     };
