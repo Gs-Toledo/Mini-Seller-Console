@@ -89,7 +89,7 @@ function App() {
   const handleConvertLead = (leadToConvert: Lead) => {
     const newOpportunity: Opportunity = {
       id: `opp_${new Date().getTime()}`,
-      name: `${leadToConvert.company} - Opportunity`,
+      name: `${leadToConvert.name} - ${leadToConvert.company}`, 
       accountName: leadToConvert.company,
       stage: "Discovery",
     };
