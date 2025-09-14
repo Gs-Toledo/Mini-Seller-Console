@@ -71,6 +71,15 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
           (opp) => opp.id !== action.payload
         ),
       };
+    case "UPDATE_OPPORTUNITY":
+      return {
+        ...state,
+        opportunities: state.opportunities.map((opp) =>
+          opp.id === action.payload.id
+            ? { ...opp, ...action.payload.updates }
+            : opp
+        ),
+      };
     case "SET_OPPORTUNITIES_PAGINATION":
       return {
         ...state,

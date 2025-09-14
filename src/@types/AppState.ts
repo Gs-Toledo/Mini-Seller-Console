@@ -37,6 +37,10 @@ export type AppAction =
   | { type: "SET_LEADS_PAGINATION"; payload: Partial<PaginationConfig> }
   | { type: "REMOVE_OPPORTUNITY"; payload: string }
   | {
+      type: "UPDATE_OPPORTUNITY";
+      payload: { id: string; updates: Partial<Opportunity> };
+    }
+  | {
       type: "SET_OPPORTUNITIES_PAGINATION";
       payload: Partial<PaginationConfig>;
     };
