@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { LeadsTable } from "./components/leads/LeadsTable";
 import { fetchLeads } from "./api/leadsApi";
 import { Spinner } from "./components/commom/Spinner";
@@ -7,11 +7,27 @@ import type { Lead } from "./@types/Lead";
 import type { Opportunity } from "./@types/Opportunity";
 import { OpportunitiesTable } from "./components/opportunities/OpportunitiesTable";
 import { LeadDetailPanel } from "./components/leads/LeadDetailPanel";
+import { Tab, Tabs } from "./components/commom/Tabs";
+import { PaginationControls } from "./components/commom/PaginationControls";
 
 function App() {
   const { state, dispatch } = useAppContext();
-  const { leads, opportunities, isLoading, error, filters, selectedLeadId } =
-    state;
+  const {
+    leads,
+    opportunities,
+    isLoading,
+    error,
+    filters,
+    selectedLeadId,
+    sortConfig,
+    pagination,
+  } = state;
+
+  const [activeTab, setActiveTab] = useState<"leads" | "opportunities">(
+    "leads"
+  );
+
+  const [isPanelMounted, setIsPanelMounted] = useState(false);
 
   useEffect(() => {
     const loadLeads = async () => {
@@ -27,8 +43,8 @@ function App() {
     loadLeads();
   }, [dispatch]);
 
-  const filteredLeads = useMemo(() => {
-    return leads
+  const processedLeads = useMemo(() => {
+    const filtered = leads
       .filter(
         (lead) =>
           lead.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
@@ -37,7 +53,41 @@ function App() {
       .filter((lead) =>
         filters.status === "all" ? true : lead.status === filters.status
       );
-  }, [leads, filters]);
+
+    const sorted = [...filtered].sort((a, b) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (a[sortConfig.key] > b[sortConfig.key]) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
+    return sorted;
+  }, [leads, filters, sortConfig]);
+
+  const paginatedLeads = useMemo(() => {
+    const { currentPage, itemsPerPage } = pagination;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return processedLeads.slice(startIndex, endIndex);
+  }, [processedLeads, pagination]);
+
+  const handleSort = (key: keyof Lead) => {
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    dispatch({ type: "SET_SORT_CONFIG", payload: { key, direction } });
+  };
+
+  useEffect(() => {
+    if (selectedLeadId) {
+      setIsPanelMounted(true);
+    } else {
+      const timer = setTimeout(() => setIsPanelMounted(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedLeadId]);
 
   const handleFilterChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -78,7 +128,40 @@ function App() {
     if (isLoading) return <Spinner />;
     if (error)
       return <p className="text-center text-red-400 p-4">Erro: {error}</p>;
-    return <LeadsTable leads={filteredLeads} onSelectLead={handleSelectLead} />;
+    return (
+      <>
+        {activeTab === "leads" && (
+          <>
+            <LeadsTable
+              leads={paginatedLeads}
+              onSelectLead={handleSelectLead}
+              onSort={handleSort}
+              sortConfig={sortConfig}
+            />
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              itemsPerPage={pagination.itemsPerPage}
+              totalItems={processedLeads.length}
+              onPageChange={(page) =>
+                dispatch({
+                  type: "SET_PAGINATION",
+                  payload: { currentPage: page },
+                })
+              }
+              onItemsPerPageChange={(size) =>
+                dispatch({
+                  type: "SET_PAGINATION",
+                  payload: { itemsPerPage: size, currentPage: 1 },
+                })
+              }
+            />
+          </>
+        )}
+        {activeTab === "opportunities" && (
+          <OpportunitiesTable opportunities={opportunities} />
+        )}
+      </>
+    );
   };
 
   return (
@@ -93,34 +176,49 @@ function App() {
           <h1 className="text-3xl font-bold">Mini Seller Console</h1>
         </header>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <input
-            type="text"
-            name="searchQuery"
-            placeholder="Search for name of company..."
-            value={filters.searchQuery}
-            onChange={handleFilterChange}
-            className="flex-grow bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <select
-            name="status"
-            value={filters.status}
-            onChange={handleFilterChange}
-            className="bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <Tabs>
+          <Tab
+            isActive={activeTab === "leads"}
+            onClick={() => setActiveTab("leads")}
           >
-            <option value="all">All Status</option>
-            <option value="New">New</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Qualified">Qualified</option>
-            <option value="Disqualified">Disqualified</option>
-          </select>
-        </div>
+            Leads ({leads.length})
+          </Tab>
+          <Tab
+            isActive={activeTab === "opportunities"}
+            onClick={() => setActiveTab("opportunities")}
+          >
+            Opportunities ({opportunities.length})
+          </Tab>
+        </Tabs>
+
+        {activeTab === "leads" && (
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <input
+              type="text"
+              name="searchQuery"
+              placeholder="Search for name of company..."
+              value={filters.searchQuery}
+              onChange={handleFilterChange}
+              className="flex-grow bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <select
+              name="status"
+              value={filters.status}
+              onChange={handleFilterChange}
+              className="bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Disqualified">Disqualified</option>
+            </select>
+          </div>
+        )}
 
         <div className="mt-4">{renderContent()}</div>
 
-        <OpportunitiesTable opportunities={opportunities} />
-
-        {selectedLead && (
+        {isPanelMounted && selectedLead && (
           <LeadDetailPanel
             lead={selectedLead}
             isOpen={!!selectedLeadId}

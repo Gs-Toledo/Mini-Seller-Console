@@ -70,5 +70,185 @@
         "source": "Website",
         "score": 91,
         "status": "New"
+    },
+    {
+        "id": 9,
+        "name": "Ian Thompson",
+        "company": "Cloud Corp.",
+        "email": "ian.t@cloudcorp.net",
+        "source": "Cold Call",
+        "score": 72,
+        "status": "Contacted"
+    },
+    {
+        "id": 10,
+        "name": "Julia Roberts",
+        "company": "NextGen Solutions",
+        "email": "julia.r@nextgensol.com",
+        "source": "Partner",
+        "score": 85,
+        "status": "Qualified"
+    },
+    {
+        "id": 11,
+        "name": "Kevin Lee",
+        "company": "Data Systems",
+        "email": "kevin.lee@datasys.com",
+        "source": "Referral",
+        "score": 40,
+        "status": "Disqualified"
+    },
+    {
+        "id": 12,
+        "name": "Laura Martinez",
+        "company": "Innovate Inc.",
+        "email": "laura.m@innovate.com",
+        "source": "Website",
+        "score": 92,
+        "status": "New"
+    },
+    {
+        "id": 13,
+        "name": "Michael Chen",
+        "company": "Global Net",
+        "email": "michael.chen@globalnet.io",
+        "source": "Advertisement",
+        "score": 67,
+        "status": "Contacted"
+    },
+    {
+        "id": 14,
+        "name": "Natalie Foster",
+        "company": "Quantum Leap",
+        "email": "natalie.f@quantum.ai",
+        "source": "Cold Call",
+        "score": 50,
+        "status": "Disqualified"
+    },
+    {
+        "id": 15,
+        "name": "Oscar Ramirez",
+        "company": "Tech Solutions",
+        "email": "oscar.r@techsolutions.com",
+        "source": "Website",
+        "score": 89,
+        "status": "Qualified"
+    },
+    {
+        "id": 16,
+        "name": "Paula Green",
+        "company": "NextGen Solutions",
+        "email": "paula.g@nextgensol.com",
+        "source": "Partner",
+        "score": 77,
+        "status": "Contacted"
+    },
+    {
+        "id": 17,
+        "name": "Quentin Brooks",
+        "company": "Cloud Corp.",
+        "email": "quentin.b@cloudcorp.net",
+        "source": "Advertisement",
+        "score": 64,
+        "status": "New"
+    },
+    {
+        "id": 18,
+        "name": "Rachel Adams",
+        "company": "Global Net",
+        "email": "r.adams@globalnet.io",
+        "source": "Website",
+        "score": 95,
+        "status": "Qualified"
+    },
+    {
+        "id": 19,
+        "name": "Samuel Turner",
+        "company": "Innovate Inc.",
+        "email": "samuel.t@innovate.com",
+        "source": "Referral",
+        "score": 48,
+        "status": "Disqualified"
+    },
+    {
+        "id": 20,
+        "name": "Tina Morgan",
+        "company": "Quantum Leap",
+        "email": "tina.m@quantum.ai",
+        "source": "Cold Call",
+        "score": 82,
+        "status": "Contacted"
+    },
+    {
+        "id": 21,
+        "name": "Ursula White",
+        "company": "Tech Solutions",
+        "email": "ursula.w@techsolutions.com",
+        "source": "Advertisement",
+        "score": 73,
+        "status": "New"
+    },
+    {
+        "id": 22,
+        "name": "Victor Hernandez",
+        "company": "Data Systems",
+        "email": "victor.h@datasys.com",
+        "source": "Partner",
+        "score": 86,
+        "status": "Qualified"
+    },
+    {
+        "id": 23,
+        "name": "Wendy Scott",
+        "company": "NextGen Solutions",
+        "email": "wendy.s@nextgensol.com",
+        "source": "Website",
+        "score": 59,
+        "status": "Disqualified"
+    },
+    {
+        "id": 24,
+        "name": "Xavier Price",
+        "company": "Cloud Corp.",
+        "email": "xavier.p@cloudcorp.net",
+        "source": "Cold Call",
+        "score": 66,
+        "status": "Contacted"
+    },
+    {
+        "id": 25,
+        "name": "Yvonne King",
+        "company": "Global Net",
+        "email": "yvonne.k@globalnet.io",
+        "source": "Referral",
+        "score": 93,
+        "status": "Qualified"
+    },
+    {
+        "id": 26,
+        "name": "Zachary Allen",
+        "company": "Tech Solutions",
+        "email": "zach.a@techsolutions.com",
+        "source": "Advertisement",
+        "score": 58,
+        "status": "New"
+    },
+    {
+        "id": 27,
+        "name": "Amber Nelson",
+        "company": "NextGen Solutions",
+        "email": "amber.n@nextgensol.com",
+        "source": "Partner",
+        "score": 81,
+        "status": "Contacted"
+    },
+    {
+        "id": 28,
+        "name": "Brian Cooper",
+        "company": "Quantum Leap",
+        "email": "brian.c@quantum.ai",
+        "source": "Website",
+        "score": 70,
+        "status": "Disqualified"
     }
 ]

@@ -1,5 +1,7 @@
-import type { Lead } from "./Lead";
+import type { Lead, LeadStatus } from "./Lead";
 import type { Opportunity } from "./Opportunity";
+import type { PaginationConfig } from "./pagination/PaginationConfig";
+import type { SortConfig } from "./pagination/SortConfig";
 
 export interface AppState {
   leads: Lead[];
@@ -9,8 +11,10 @@ export interface AppState {
   selectedLeadId: number | null;
   filters: {
     searchQuery: string;
-    status: string; // 'all' or leadStatus
+    status: "all" | LeadStatus; // 'all' or leadStatus
   };
+  sortConfig: SortConfig;
+  pagination: PaginationConfig;
 }
 
 export type AppAction =
@@ -27,4 +31,6 @@ export type AppAction =
   | {
       type: "CONVERT_TO_OPPORTUNITY";
       payload: { leadId: number; opportunity: Opportunity };
-    };
+    }
+  | { type: "SET_SORT_CONFIG"; payload: SortConfig }
+  | { type: "SET_PAGINATION"; payload: Partial<PaginationConfig> };

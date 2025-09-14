@@ -80,9 +80,10 @@ export const LeadDetailPanel = ({
       {/* Panel */}
       {/* FIXME: Fix panel animation */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-gray-800 shadow-xl z-50 p-6 flex flex-col 
-                    transform transition-transform duration-300 ease-in-out
-                    ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`
+        fixed top-0 right-0 h-full w-full max-w-md bg-gray-800 shadow-xl z-50 p-6 flex flex-col
+        transform transition-transform duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "translate-x-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex items-center justify-between pb-4 border-b border-gray-600">

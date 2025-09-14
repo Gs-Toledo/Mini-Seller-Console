@@ -20,21 +20,29 @@ export const LeadsTableRow = ({ lead, onSelectLead }: LeadsTableRowProps) => {
       className="bg-gray-800 border-b border-gray-700 hover:bg-gray-600 cursor-pointer transition-colors duration-150"
       onClick={() => onSelectLead(lead.id)}
     >
-      <th
-        scope="row"
-        className="px-6 py-4 font-medium text-white whitespace-nowrap"
+      <td
+        className="px-6 py-4 font-medium text-white whitespace-nowrap block sm:table-cell"
+        data-label="Name"
       >
         {lead.name}
-      </th>
-      <td className="px-6 py-4">{lead.company}</td>
-      <td className="px-6 py-4">
+      </td>
+      <td className="px-6 py-4 block sm:table-cell" data-label="Company">
+        {lead.company}
+      </td>
+      <td className="px-6 py-4 block sm:table-cell" data-label="Status">
         <span
           className={`px-2 py-1 text-xs font-semibold rounded-full text-white ${statusColor}`}
         >
           {lead.status}
         </span>
       </td>
-      <td className="px-6 py-4 text-right font-bold">{lead.score}</td>
+      <td
+        className="px-6 py-4 font-bold block sm:table-cell sm:text-right"
+        data-label="Score"
+      >
+        <span className="sm:hidden text-gray-400 mr-2">Score:</span>
+        {lead.score}
+      </td>
     </tr>
   );
 };

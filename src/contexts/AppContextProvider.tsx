@@ -12,6 +12,8 @@ const initialState: AppState = {
     searchQuery: "",
     status: "all",
   },
+  sortConfig: { key: "score", direction: "desc" },
+  pagination: { currentPage: 1, itemsPerPage: 10 },
 };
 
 const getInitialState = (): AppState => {
@@ -68,6 +70,13 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         leads: state.leads.filter((lead) => lead.id !== action.payload.leadId),
         opportunities: [...state.opportunities, action.payload.opportunity],
         selectedLeadId: null,
+      };
+    case "SET_SORT_CONFIG":
+      return { ...state, sortConfig: action.payload };
+    case "SET_PAGINATION":
+      return {
+        ...state,
+        pagination: { ...state.pagination, ...action.payload },
       };
     default:
       return state;
